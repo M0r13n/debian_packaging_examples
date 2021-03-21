@@ -3,7 +3,7 @@
 set -e
 
 build(){
-    debuild
+    dpkg-buildpackage -rfakeroot -b --no-sign   
 }
 
 

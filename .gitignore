@@ -3,3 +3,10 @@
 *.changes
 *.ddeb
 complex/grep*
+**/hello
+*.build
+*.dsc
+*.gz
+**.debhelper
+auto/debian/hello-world/
+*.log

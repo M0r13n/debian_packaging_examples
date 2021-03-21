@@ -32,7 +32,7 @@ compile(){
     # Compiles the package and creates the final .deb package
     (   
         cd "${GREP_VERSION}"
-        dpkg-buildpackage -rfakeroot -b
+        dpkg-buildpackage -rfakeroot -b --no-sign   
     )
 }
 
@@ -42,13 +42,7 @@ build() {
     compile
 }
 
-cleanup() {
-    rm ./*.xz
-    rm ./*.dsc
-    rm ./*.asc
-}
 
-trap cleanup EXIT
-rm -r "${GREP_VERSION}"
+rm -fr "${GREP_VERSION}"
 check_requirements
 build

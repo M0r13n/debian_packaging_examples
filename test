@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+set -e
+
+ROOT_DIR=$(
+    cd "$(dirname "$0")"
+    pwd
+)
+
+check_files_exist(){
+    for file in $1; do
+        if [[ ! -f "$file" ]]; then
+            echo "$file not found, but should have be generated!" >&2
+            exit 1
+        fi
+    done
+}
+
+test_auto() {
+    # Execute the build
+    (
+        cd auto
+        ./build
+    )
+
+    # Check that required files do exist
+    local -a files=("hello-world_1.0-1_amd64.buildinfo" "hello-world_1.0-1_amd64.changes" "hello-world_1.0-1_amd64.deb" "hello-world-dbgsym_1.0-1_amd64.ddeb")
+    check_files_exist "${files[@]}"
+}
+
+test_simple() {
+    # Execute the build
+    (
+        cd simple
+        ./build
+    )
+    
+    # Check that required files do exist
+    local -a files=("simple/colors.deb")
+    check_files_exist "${files[@]}"
+}
+
+test_complex() {
+    # Execute the build
+    (
+        cd complex
+        ./build
+    )
+
+    # Check that required files do exist
+    local -a files=("complex/grep_3.6-1_amd64.buildinfo" "complex/grep_3.6-1_amd64.changes" "complex/grep_3.6-1_amd64.deb" "complex/grep-dbgsym_3.6-1_amd64.ddeb")
+    check_files_exist "${files[@]}"
+
+}
+
+cleanup() {
+    # Auto
+    rm -f "${ROOT_DIR}"/*.build
+    rm -f "${ROOT_DIR}"/*.buildinfo
+    rm -f "${ROOT_DIR}"/*.changes
+    rm -f "${ROOT_DIR}"/*.deb
+    rm -f "${ROOT_DIR}"/*.dsc
+    rm -f "${ROOT_DIR}"/*.gz
+    rm -f "${ROOT_DIR}"/*.ddeb
+
+    # Auto
+    rm -f "${ROOT_DIR}"/complex/*.build
+    rm -f "${ROOT_DIR}"/complex/*.buildinfo
+    rm -f "${ROOT_DIR}"/complex/*.changes
+    rm -f "${ROOT_DIR}"/complex/*.deb
+    rm -f "${ROOT_DIR}"/complex/*.dsc
+    rm -f "${ROOT_DIR}"/complex/*.gz
+    rm -f "${ROOT_DIR}"/complex/*.ddeb
+
+    # Simple
+    rm -f "${ROOT_DIR}"/simple/*.deb
+}
+
+trap cleanup EXIT
+
+test_all() {
+    test_simple
+    test_auto
+    test_complex
+}
+
+test_all
+echo "All tests passed. Hooray"
