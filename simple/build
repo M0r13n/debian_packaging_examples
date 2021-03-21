@@ -4,6 +4,17 @@ set -e
 
 declare -r PACKAGE_NAME="colors"
 declare -r PACKAGE_DIR="debian"
+declare -ra REQUIREMENTS=("fakeroot" "dpkg" "build-essential" "gzip" "lintian")
+
+check_requirements() {
+    for item in ${REQUIREMENTS[*]}; do
+        if ! dpkg --status "$item" &> /dev/null; then
+            echo "$item is not installed. Install via 'sudo apt-get install $item'" >&2
+            exit 1
+        fi
+    done
+    echo "All required programs are installed."
+}
 
 setup_debian_dir() {
     # Creates an empty folder structure for the final Debian package
@@ -52,8 +63,8 @@ package() {
     # Creates the actual .deb package
     fakeroot dpkg-deb --build ${PACKAGE_DIR}
     mv ${PACKAGE_DIR}.deb ${PACKAGE_NAME}.deb
+    echo "Successfully created ${PACKAGE_NAME}.deb"
 }
-
 
 lint() {
     # Check if there are any errors
@@ -69,10 +80,11 @@ build() {
     lint
 }
 
-cleanup(){
-    # Delete the temporary package dir 
+cleanup() {
+    # Delete the temporary package dir
     rm -rf ./${PACKAGE_DIR}
 }
 
 trap cleanup EXIT
+check_requirements
 build
