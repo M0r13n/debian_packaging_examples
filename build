@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+set -e
+
+declare -r PACKAGE_NAME="colors"
+declare -r PACKAGE_DIR="debian"
+
+setup_debian_dir() {
+    # Creates an empty folder structure for the final Debian package
+
+    # Create binary folder
+    mkdir -p ./${PACKAGE_DIR}/usr/bin
+
+    # Create Manpage folder
+    mkdir -p ./${PACKAGE_DIR}/usr/share/man/man1
+
+    # Create Debian metadata dirs
+    mkdir -p ./${PACKAGE_DIR}/DEBIAN
+    mkdir -p ./${PACKAGE_DIR}/usr/share/doc/${PACKAGE_NAME}
+
+    # make sure all sub directories of '<PACKAGE_DIR>' have file permission 0755
+    chmod -R 755 ./${PACKAGE_DIR}
+}
+
+copy_files_into_debian_dir() {
+    # Copies all src files into their final location inside the temporary debian dir
+
+    # copy 'copyright', 'changelog', and 'changelog.Debian' files into 'debian/usr/share/doc/<package_name>'
+    cp ./src/changelog ./${PACKAGE_DIR}/usr/share/doc/${PACKAGE_NAME}/
+    cp ./src/changelog.Debian ./${PACKAGE_DIR}/usr/share/doc/${PACKAGE_NAME}/
+    cp ./src/copyright ./${PACKAGE_DIR}/usr/share/doc/${PACKAGE_NAME}/
+
+    # copy 'control' file into 'debian/DEBIAN' directory
+    cp ./src/control ./${PACKAGE_DIR}/DEBIAN/
+
+    # copy executable file into 'debian/usr/bin' directory
+    cp ./src/colors ./${PACKAGE_DIR}/usr/bin
+
+    # copy man page file into 'debian/usr/share/man/man1' directory
+    cp ./src/colors.1 ./${PACKAGE_DIR}/usr/share/man/man1
+}
+
+prepare_debian_dir() {
+    # Prepares the debian dir
+
+    # gzip man page, 'changelog', and 'changelog.Debian' files with option '--best'
+    gzip --best ./${PACKAGE_DIR}/usr/share/doc/${PACKAGE_NAME}/changelog*
+    gzip --best ./${PACKAGE_DIR}/usr/share/man/man1/*
+}
+
+package() {
+    # Creates the actual .deb package
+    fakeroot dpkg-deb --build ${PACKAGE_DIR}
+    mv ${PACKAGE_DIR}.deb ${PACKAGE_NAME}.deb
+}
+
+
+lint() {
+    # Check if there are any errors
+    lintian ${PACKAGE_NAME}.deb
+}
+
+build() {
+    # Create a new debian package
+    setup_debian_dir
+    copy_files_into_debian_dir
+    prepare_debian_dir
+    package
+    lint
+}
+
+cleanup(){
+    # Delete the temporary package dir 
+    rm -rf ./${PACKAGE_DIR}
+}
+
+trap cleanup EXIT
+build

@@ -1,0 +1,9 @@
+Package: colors
+Version: 1.0-1
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: build-essential (>= 12.8)
+Maintainer: Leon Richter <misc@leonmortenrichter.de>
+Description: small little program that serves as the most simple demo
+ on how to create a Debian package.
