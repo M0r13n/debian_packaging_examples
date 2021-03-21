@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -e
+
+declare -ra REQUIREMENTS=("fakeroot" "dpkg" "build-essential" "gzip" "lintian" "devscripts")
+declare -r SOURCES_URL="https://ftp.debian.org/debian/pool/main/g/grep/grep_3.6-1.dsc"
+declare -r GREP_VERSION="grep-3.6"
+
+check_requirements() {
+    # Checks if all required programs are available
+    for item in ${REQUIREMENTS[*]}; do
+        if ! dpkg --status "$item" &>/dev/null; then
+            echo "$item is not installed. Install via 'sudo apt-get install $item'" >&2
+            exit 1
+        fi
+    done
+    echo "All required programs are installed."
+}
+
+get_sources() {
+    # Gets the source package and unpacks it
+    dget -u "$SOURCES_URL"
+}
+
+install_build_dependencies() {
+    # Installs all required build dependencies
+    # Requires the dep-src URL to be set in your apt.sources
+    sudo apt-get build-dep "${GREP_VERSION}"
+}
+
+compile(){
+    # Compiles the package and creates the final .deb package
+    (   
+        cd "${GREP_VERSION}"
+        dpkg-buildpackage -rfakeroot -b
+    )
+}
+
+build() {
+    get_sources
+    # install_build_dependencies
+    compile
+}
+
+cleanup() {
+    rm ./*.xz
+    rm ./*.dsc
+    rm ./*.asc
+}
+
+trap cleanup EXIT
+rm -r "${GREP_VERSION}"
+check_requirements
+build
