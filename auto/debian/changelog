@@ -1,6 +1,6 @@
+hello-world (1.0-1) stable; urgency=low
 
-colors (1.0-1)
+  * init
 
-  * Initial Release
-
- -- Leon Morten Richter <misc@leonmortenrichter.de>  2021-03-20
+ -- Leon Morten Richter <misc@leonmortenrichter.de>  Mon, 09 Nov 2020 21:37:02 +0100
+ 
