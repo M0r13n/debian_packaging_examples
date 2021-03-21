@@ -1,0 +1,17 @@
+on:
+  push
+name: Run tests
+jobs:
+  test:
+    name:  Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Install Requirements
+        run: sudo apt-get install -y fakeroot dpkg build-essential gzip lintian devscripts debhelper cdbs quilt texinfo
+
+
+      - name: Run tests
+        run: ./test
+        shell: bash
