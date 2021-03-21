@@ -7,6 +7,7 @@ declare -r PACKAGE_DIR="debian"
 declare -ra REQUIREMENTS=("fakeroot" "dpkg" "build-essential" "gzip" "lintian")
 
 check_requirements() {
+    # Checks if all required programs are available
     for item in ${REQUIREMENTS[*]}; do
         if ! dpkg --status "$item" &> /dev/null; then
             echo "$item is not installed. Install via 'sudo apt-get install $item'" >&2

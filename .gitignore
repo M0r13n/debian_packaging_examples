@@ -1,1 +1,5 @@
 *.deb
+*.buildinfo
+*.changes
+*.ddeb
+complex/grep*
