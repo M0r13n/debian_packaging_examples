@@ -1,0 +1,12 @@
+Source: hello-world
+Section: utils
+Priority: optional
+Maintainer: Leon Richter <misc@leonmortenrichter.de>
+Standards-Version: 4.5.0
+Build-Depends: cdbs, debhelper (>= 10~), gettext, libpcre3-dev (>= 1:8.31-3), quilt, texinfo
+
+Package: hello-world
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends}, dpkg (>= 1.15.4) | install-info
+Description: Print Hello world
