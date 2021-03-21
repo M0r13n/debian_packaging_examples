@@ -1,14 +1,14 @@
 # How to create Debian packages examples
 
-- [Auto] (/auto)
+- [Auto](/auto)
     * an example that uses `debuild` to create a debian package
     * includes a Makefile that compiles a  simple hello world program in C
 
-- [Complex] (/complex)
+- [Complex](/complex)
     * an example that uses fetches `grep` sources
     * compiles grep and then creates a debian package via `dpkg-buildpackage`
 
-- [Simple] (/simple)
+- [Simple](/simple)
     * an simple exmaple that creates a Debian package completly by hand
     * packages a simple shell script into a `.deb` file
 
