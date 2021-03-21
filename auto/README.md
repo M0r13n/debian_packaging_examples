@@ -1,5 +1,5 @@
 # Debian (.deb) package 
-
+This creates a Debian package for a simple Hello World program.
 
 Run `debuild -S` and notice the genereated files inside the parent directory:
 
